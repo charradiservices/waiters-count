@@ -1,0 +1,23 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "5551:5551"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - database
+
+  frontend:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "5552:5552"
+
+volumes:
+  mongo_data:
