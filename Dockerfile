@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 5551
 
 # Start the backend
-CMD ["npm", "start"]
+CMD ["node", "index.js"]

@@ -8,8 +8,6 @@ services:
       - "5551:5551"
     environment:
       - NODE_ENV=production
-    depends_on:
-      - database
 
   frontend:
     build:
@@ -17,7 +15,4 @@ services:
       dockerfile: Dockerfile
     container_name: frontend
     ports:
-      - "5552:5552"
-
-volumes:
-  mongo_data:
+      - "5552:80"

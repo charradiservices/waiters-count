@@ -8,7 +8,7 @@ function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:3000/waiters/grouped") // Replace with your API endpoint
+    fetch("http://charradiservices.ma:5551/waiters/grouped") // Replace with your API endpoint
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch data");
@@ -41,7 +41,7 @@ function App() {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center mt-16">
+<div className="flex flex-col justify-center items-center mt-16">
       <div className="block w-full overflow-x-auto max-w-xl border">
         <table className="items-center w-full bg-transparent border-collapse">
           <thead>
@@ -49,12 +49,10 @@ function App() {
               <th className="px-4 bg-gray-50 text-gray-700 align-middle py-3 text-base font-semibold text-left uppercase border-l-0 border-r-0 whitespace-nowrap">
                 Center
               </th>
-              <th className="px-4 bg-gray-50 text-gray-700 align-middle py-3 text-base font-semibold text-left uppercase border-l-0 border-r-0 whitespace-nowrap">
-                Category{" "}
+              <th className="px-4 bg-gray-50 text-gray-700 align-middle py-3 text-base font-semibold text-center uppercase border-l-0 border-r-0 whitespace-nowrap">
+                Category
               </th>
-              <th className="px-4 bg-gray-50 text-gray-700 align-middle py-3 text-base font-semibold text-left uppercase border-l-0 border-r-0 whitespace-nowrap min-w-140-px"></th>
-
-              <th className="px-4 bg-gray-50 text-gray-700 align-middle py-3 text-base font-semibold text-left uppercase border-l-0 border-r-0 whitespace-nowrap">
+              <th className="px-4 bg-gray-50 text-gray-700 align-middle py-3 text-base font-semibold text-center uppercase border-l-0 border-r-0 whitespace-nowrap">
                 No of Waiters
               </th>
             </tr>
@@ -65,10 +63,10 @@ function App() {
                 <th className="border-t-0 px-4 align-middle text-base font-bold whitespace-nowrap p-4 text-left">
                   {group._id.city}
                 </th>
-                <td className="border-t-0 px-4 align-middle text-base font-medium text-gray-900 whitespace-nowrap p-4">
+                <td className="border-t-0 px-4 align-middle text-base font-medium text-gray-900 whitespace-nowrap p-4 text-center">
                   {group._id.cas}
                 </td>
-                <td className="border-t-0 px-4 align-middle text-base">
+                <td className="border-t-0 px-4 align-middle text-base text-center">
                   {group.count}
                 </td>
               </tr>
