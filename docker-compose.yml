@@ -1,18 +1,18 @@
 services:
-  backend:
+  waiters-counter-backend:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: backend
+    container_name: waiters-counter-backend
     ports:
       - "5551:5551"
     environment:
       - NODE_ENV=production
 
-  frontend:
+  waiters-counter-frontend:
     build:
       context: ./ui
       dockerfile: Dockerfile
-    container_name: frontend
+    container_name: waiters-counter-frontend
     ports:
       - "5552:80"

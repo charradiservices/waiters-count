@@ -1,0 +1,74 @@
+# Dependencies
+
+node_modules/
+/ui/node_modules/
+/.pnp
+.pnp.js
+.pnpm-store/
+
+# Build outputs
+/dist/
+/build/
+/out/
+/.next/
+/ui/.next/
+/.swc/
+/ui/.swc/
+
+# Testing
+/coverage
+/ui/coverage
+.nyc_output
+
+# Environment Variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+logs/
+*.log
+
+# IDE and editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+.history/
+
+# Temporary files
+.temp
+.tmp
+.cache/
+tmp/
+
+# Typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# Misc
+.vercel
+.turbo
+stats.html
+storybook-static/
+*.pem
+
+# MongoDB local data
+/data/db/
+
+# Production build files
+/public/static/
+/ui/public/static/
