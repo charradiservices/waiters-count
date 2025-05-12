@@ -3,12 +3,14 @@ const cors = require("cors");
 const { MongoClient } = require("mongodb");
 const bodyParser = require("body-parser");
 const WebSocket = require('ws');
+const fs = require('fs');
+const https = require('https');
 
 
 const config = {
   port: 5551,
   mongodb: {
-    uri: "mongodb://admin:MongoAdminP%40ss20*@charradiservices.ma:25000/?tls=true&tlsInsecure=true",
+    uri: "mongodb://charradiservices.ma:26000/",
     databases: {
       tls: "tls_database",
       dashboard: "dashboard"
@@ -249,7 +251,10 @@ const createRouteHandlers = (waiterService, treatedGroupService) => {
 const setupApp = async () => {
 
   const app = express();
-  app.use(cors());
+  app.use(cors({
+    origin: 'https://app.charradiservices.ma',
+    credentials: true,
+  }));
   app.use(bodyParser.json());
 
   // Initialize database connections
@@ -268,61 +273,65 @@ const setupApp = async () => {
     // Schedule treated groups reset
     treatedGroupService.scheduleReset();
 
-    // Start server
-    app.listen(config.port, () => {
-      console.log(`Server is running on http://localhost:${config.port}`);
+    // Load SSL certificate and key
+    const sslOptions = {
+      key: fs.readFileSync('./cert/server.key'),
+      cert: fs.readFileSync('./cert/server.crt')  // Include intermediates!
+    };
+
+    // Create HTTPS server
+    const server = https.createServer(sslOptions, app);
+
+    // Start HTTPS server
+    server.listen(config.port, () => {
+      console.log(`HTTPS Server is running on https://localhost:${config.port}`);
     });
 
-    // Create HTTP server
-    const server = app.listen(config.port, () => {
-      console.log(`Server is running on http://localhost:${config.port}`);
-    });
-
-    // Setup WebSocket server
+    // Setup WebSocket server with HTTPS
     const wss = new WebSocket.Server({ server });
 
     // Store connected clients
-    const clients = new Set();
+    // const clients = new Set();
 
-    // WebSocket connection handler
-    wss.on('connection', (ws) => {
-      console.log('Client connected');
-      clients.add(ws);
+    // // WebSocket connection handler
+    // wss.on('connection', (ws) => {
+    //   console.log('Client connected');
+    //   clients.add(ws);
 
-      // Send initial data to the client
-      waiterService.getGroupedWaiters().then(data => {
-        ws.send(JSON.stringify({ type: 'initialData', data }));
-      }).catch(err => {
-        console.error('Error sending initial data:', err);
-      });
+    //   // Send initial data to the client
+    //   waiterService.getGroupedWaiters().then(data => {
+    //     ws.send(JSON.stringify({ type: 'initialData', data }));
+    //   }).catch(err => {
+    //     console.error('Error sending initial data:', err);
+    //   });
 
-      // Handle client disconnect
-      ws.on('close', () => {
-        console.log('Client disconnected');
-        clients.delete(ws);
-      });
-    });
+    //   // Handle client disconnect
+    //   ws.on('close', () => {
+    //     console.log('Client disconnected');
+    //     clients.delete(ws);
+    //   });
+    // });
 
-    // Add broadcast function to waiter service
-    waiterService.broadcastUpdate = async () => {
-      if (clients.size > 0) {
-        try {
-          const data = await waiterService.getGroupedWaiters();
-          const message = JSON.stringify({ type: 'update', data });
+    // // Add broadcast function to waiter service
+    // waiterService.broadcastUpdate = async () => {
+    //   if (clients.size > 0) {
+    //     try {
+    //       const data = await waiterService.getGroupedWaiters();
+    //       const message = JSON.stringify({ type: 'update', data });
 
-          clients.forEach(client => {
-            if (client.readyState === WebSocket.OPEN) {
-              client.send(message);
-            }
-          });
-        } catch (error) {
-          console.error('Error broadcasting update:', error);
-        }
-      }
-    };
+    //       clients.forEach(client => {
+    //         if (client.readyState === WebSocket.OPEN) {
+    //           client.send(message);
+    //         }
+    //       });
+    //     } catch (error) {
+    //       console.error('Error broadcasting update:', error);
+    //     }
+    //   }
+    // };
 
     // Setup MongoDB change stream to detect changes
-    setupChangeStream(tlsDb, waiterService);
+    // setupChangeStream(tlsDb, waiterService);
 
   } catch (error) {
     console.error("Failed to start application:", error);
@@ -331,20 +340,20 @@ const setupApp = async () => {
 };
 
 // Function to set up MongoDB change stream
-const setupChangeStream = async (db, waiterService) => {
-  try {
-    const collection = db.collection('all_waiters');
-    const changeStream = collection.watch();
+// const setupChangeStream = async (db, waiterService) => {
+//   try {
+//     const collection = db.collection('all_waiters');
+//     const changeStream = collection.watch();
 
-    changeStream.on('change', async () => {
-      console.log('Detected change in waiters collection');
-      await waiterService.broadcastUpdate();
-    });
+//     changeStream.on('change', async () => {
+//       console.log('Detected change in waiters collection');
+//       await waiterService.broadcastUpdate();
+//     });
 
-    console.log('Change stream established for waiters collection');
-  } catch (error) {
-    console.error('Error setting up change stream:', error);
-  }
-};
+//     console.log('Change stream established for waiters collection');
+//   } catch (error) {
+//     console.error('Error setting up change stream:', error);
+//   }
+// };
 
 setupApp();

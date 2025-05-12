@@ -9,10 +9,10 @@ services:
     environment:
       - NODE_ENV=production
 
-  waiters-counter-frontend:
-    build:
-      context: ./ui
-      dockerfile: Dockerfile
-    container_name: waiters-counter-frontend
-    ports:
-      - "5552:80"
+  # waiters-counter-frontend:
+  #   build:
+  #     context: ./ui
+  #     dockerfile: Dockerfile
+  #   container_name: waiters-counter-frontend
+  #   ports:
+  #     - "5552:80"
